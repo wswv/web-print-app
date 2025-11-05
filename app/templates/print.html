@@ -1,0 +1,43 @@
+<!-- print.html -->
+{% extends "base.html" %}{% block content %}
+<div class="center">
+  <h1>拖文件来打印</h1>
+  <div id="drop" class="dropzone">拖文件到这里（支持多选）</div>
+  <div id="preview"></div>
+  <button onclick="printAll()" id="printBtn" style="display:none">打印全部 (0)</button>
+  <div id="log"></div>
+</div>
+<script>
+let files = [];
+const preview = document.getElementById('preview');
+const btn = document.getElementById('printBtn');
+document.getElementById('drop').ondrop = e => {
+  e.preventDefault();
+  files = [...e.dataTransfer.files];
+  btn.style.display = 'block';
+  btn.innerText = `打印全部 (${files.length})`;
+  preview.innerHTML = '';
+  files.forEach((f,i) => {
+    const div = document.createElement('div');
+    div.innerHTML = `<b>${f.name}</b> <span id="s${i}"></span>`;
+    if (f.type.startsWith('image/')) {
+      const img = document.createElement('img');
+      img.src = URL.createObjectURL(f); img.width = 200;
+      div.appendChild(img);
+    }
+    preview.appendChild(div);
+  });
+};
+async function printAll() {
+  btn.disabled = true;
+  for (let i = 0; i < files.length; i++) {
+    const fd = new FormData();
+    fd.append('file', files[i]);
+    const r = await fetch('/print', {method:'POST', body:fd});
+    const t = await r.text();
+    document.getElementById('s'+i).innerText = t.includes('成功') ? 'Printed' : 'Failed';
+  }
+  btn.disabled = false;
+}
+</script>
+{% endblock %}

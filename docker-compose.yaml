@@ -1,0 +1,65 @@
+version: '3.9'
+services:
+  web:
+    build: .
+    ports: ["5000:5000"]
+    volumes: 
+      - .:/app
+      - uploads:/uploads
+    depends_on: [db, redis, cups]
+    environment:
+      - DATABASE_URL=mysql+pymysql://flask:flaskpass@db/flaskdb
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=dev-super-secret
+    command: flask run --host=0.0.0.0 --port=5000
+
+  db:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: flaskdb
+      MYSQL_USER: flask
+      MYSQL_PASSWORD: flaskpass
+      MYSQL_ROOT_PASSWORD: rootpass
+    volumes: ["mysqldata:/var/lib/mysql"]
+
+  redis:
+    image: redis:7-alpine
+
+  cups:
+    image: anujdatar/cups:latest
+    privileged: true
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+    ports: ["631:631"]
+    volumes:
+      - cups-config:/etc/cups
+      - uploads:/uploads:ro
+    environment:
+      - CUPSADMIN=admin
+      - CUPSPASSWORD=123456
+
+  adminer:
+    image: adminer
+    ports: ["8080:8080"]
+    depends_on: [db]
+
+  nginx:
+    image: nginx:alpine
+    ports: ["80:80", "443:443"]
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./certs:/etc/letsencrypt:ro
+    depends_on: [web]
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./certs:/etc/letsencrypt
+      - ./certs:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h; done;'"
+
+volumes:
+  uploads:
+  mysqldata:
+  cups-config:

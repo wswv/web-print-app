@@ -1,0 +1,15 @@
+<!-- stats.html -->
+{% extends "base.html" %}{% block content %}
+<h1>打印排行榜</h1>
+<table width="100%">
+<tr><th>时间</th><th>用户</th><th>文件</th><th>页数</th></tr>
+{% for j in jobs %}
+<tr>
+  <td>{{ j.timestamp.strftime('%m-%d %H:%M') }}</td>
+  <td>{{ j.user.username if j.user else '游客' }}</td>
+  <td>{{ j.filename }}</td>
+  <td>{{ j.pages }}</td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}
