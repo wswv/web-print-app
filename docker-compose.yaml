@@ -14,6 +14,7 @@ services:
       - ADMIN_USER=admin
       - ADMIN_PASS=123456
       - ADMIN_EMAIL=admin@company.com
+
     command: flask run --host=0.0.0.0 --port=5000
 
   db:

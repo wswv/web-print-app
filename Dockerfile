@@ -1,4 +1,4 @@
-# 1. Dockerfile（加用户版）
+# Dockerfile（终极·自带自动建号）
 FROM python:3.12-slim AS builder
 WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -9,9 +9,9 @@ RUN pip install --no-cache-dir --target=/install -r requirements.txt
 
 FROM python:3.12-slim
 WORKDIR /app
-# 1. 创建普通用户
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libreoffice poppler-utils cups-client \
+    libreoffice poppler-utils cups-client mysql-client \
     && rm -rf /var/lib/apt/lists/* \
     && rm -f /usr/bin/soffice && ln -sf /usr/bin/libreoffice /usr/bin/soffice \
     && useradd -m -s /bin/bash appuser \
@@ -19,7 +19,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY --from=builder /install /usr/local/lib/python3.12/site-packages
 RUN ln -s /usr/local/lib/python3.12/site-packages/bin/gunicorn /usr/local/bin/gunicorn
+
 COPY . .
-# 2. 切换用户
+# 关键：把脚本拷进去
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
 USER appuser
+# 关键：写在镜像里！
+ENTRYPOINT ["/bin/sh", "/app/entrypoint.sh"]
 CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:5000", "run:app"]
