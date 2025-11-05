@@ -1,14 +1,18 @@
-name: Docker Multi-Arch Build & Publish
+# .github/workflows/docker-publish.yml（终极合体版）
+name: Build & Push Multi-Arch
 
 on:
   push:
-    tags: [ 'v*.*.*' ]          # v1.0.0 自动触发
-  workflow_dispatch:            # 手动点“Run workflow”也能跑
+    tags: [ 'v*.*.*' ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions: { packages: write, contents: read }
+    permissions:
+      packages: write
+      contents: read
+
     steps:
       - uses: actions/checkout@v4
 
@@ -34,7 +38,6 @@ jobs:
           push: true
           tags: |
             ${{ steps.meta.outputs.image }}:${{ steps.meta.outputs.version }}
-            ${{ steps.meta.outputs.image }}:latest
-            ${{ steps.meta.outputs.image }}:latest-amd64
-            ${{ steps.meta.outputs.image }}:latest-arm64
-            ${{ steps.meta.outputs.image }}:latest-armv7
+            ${{ steps.meta.outputs.image }}:latest     # ← 所有架构合并到这一个标签
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
