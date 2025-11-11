@@ -1,8 +1,0 @@
-{% extends "base.html" %}
-{% block content %}
-<div class="center">
-    <h1>欢迎，{{ name }} </h1>
-    <p>Redis 在线：{{ 'Yes' if redis.ping() else 'No' }}</p>
-    <p><a href="http://localhost:8080" target="_blank">打开 Adminer 管理数据库</a></p>
-</div>
-{% endblock %}

@@ -1,0 +1,13 @@
+{% macro render_field(field) %}
+<div class="mb-4">
+<label for="{{ field.id }}" class="block text-gray-700 text-sm font-bold mb-2">
+{{ field.label.text if field.label.text else (label_text if label_text is defined else field.name) }}
+</label>
+{{ field(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-blue-500", **kwargs) }}
+{% if field.errors %}
+{% for error in field.errors %}
+<p class="error-message">{{ error }}</p>
+{% endfor %}
+{% endif %}
+</div>
+{% endmacro %}

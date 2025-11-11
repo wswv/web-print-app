@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ title }} - Web 打印</title>
+<!-- 引入 Tailwind CSS CDN -->
+<link href="{{ url_for('static', filename='css/full_tailwind.css') }}" rel="stylesheet">
+<style>
+/* 确保页面主体内容有足够的空间 /
+.main-content {
+padding-top: 4rem; / 留出导航栏空间 /
+}
+/ 简单美化表单错误提示 /
+.error-message {
+color: #dc2626; / red-600 */
+font-size: 0.75rem;
+margin-top: 0.25rem;
+}
+</style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+<nav class="fixed top-0 left-0 right-0 z-10 bg-gray-800 shadow-md">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<div class="flex items-center">
+<a href="{{ url_for('main.index') }}" class="text-white text-xl font-bold">Web 打印</a>
+</div>
+<div class="hidden md:block">
+<div class="ml-10 flex items-baseline space-x-4">
+{% if current_user.is_authenticated %}
+<a href="{{ url_for('main.index') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">队列状态</a>
+{% if current_user.is_admin %}
+<!-- 【新增】用户管理链接 -->
+<a href="{{ url_for('auth.manage_users') }}" class="bg-red-600 text-white hover:bg-red-700 px-3 py-2 rounded-md text-sm font-medium">用户管理</a>
+{% endif %}
+<a href="{{ url_for('auth.change_password') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">修改密码</a>
+<a href="{{ url_for('auth.logout') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">登出 ({{ current_user.username }})</a>
+{% else %}
+<a href="{{ url_for('auth.login') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">登录</a>
+{% endif %}
+</div>
+</div>
+<!-- 移动端菜单按钮 (省略实现) -->
+</div>
+</div>
+</nav>
+
+<div class="main-content">
+    <!-- Flash Messages -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="p-3 mb-4 rounded-md text-sm 
+                    {% if category == 'success' %} bg-green-100 text-green-800
+                    {% elif category == 'danger' %} bg-red-100 text-red-800
+                    {% elif category == 'info' %} bg-blue-100 text-blue-800
+                    {% else %} bg-yellow-100 text-yellow-800
+                    {% endif %}" role="alert">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {% block content %}{% endblock %}
+    </div>
+</div>
+
+
+</body>
+</html>

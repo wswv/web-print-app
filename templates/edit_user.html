@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% from 'macros.html' import render_field %}
+
+{% block content %}
+
+<div class="container mx-auto p-4 max-w-lg">
+<h1 class="text-2xl font-bold mb-6 text-center text-gray-800">编辑用户: {{ user.username }}</h1>
+
+<div class="bg-white p-8 rounded-xl shadow-2xl border border-gray-100">
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        
+        <div class="space-y-5">
+            <!-- 用户名 -->
+            {{ render_field(form.username, label_text='用户名') }}
+            
+            <!-- 管理员权限 -->
+            <div class="flex items-center pt-2">
+                <div class="flex items-center h-5">
+                    {{ form.is_admin(class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded") }}
+                </div>
+                <label for="{{ form.is_admin.id }}" class="ml-3 text-sm font-medium text-gray-700">
+                    {{ form.is_admin.label.text }}
+                </label>
+            </div>
+
+            <hr class="my-4 border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-700">密码修改 (留空则不修改)</h3>
+
+            <!-- 新密码 -->
+            {{ render_field(form.new_password) }}
+            
+            <!-- 确认新密码 -->
+            {{ render_field(form.confirm_password) }}
+        </div>
+        
+        <div class="mt-8 flex justify-between space-x-4">
+            <a href="{{ url_for('auth.manage_users') }}" class="flex-1 text-center bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150">取消</a>
+            {{ form.submit(class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150") }}
+        </div>
+    </form>
+</div>
+
+
+</div>
+{% endblock %}

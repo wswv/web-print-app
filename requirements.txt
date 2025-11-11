@@ -1,11 +1,8 @@
-Flask==3.0.3
-Flask-SQLAlchemy==3.1.1
-Flask-Login==0.6.3
-Flask-Migrate==4.0.7
-pymysql==1.1.1
-redis==5.0.8
-gunicorn==23.0.0
-python-dotenv==1.0.1
-pycups==2.0.1
-docx2pdf==0.1.8
-pdf2image==1.17.0
+Flask
+pycups
+Flask-Login
+Flask-WTF
+Flask-SQLAlchemy
+qrcode[pil]
+gunicorn
+# Pycups 依赖 libcups2-dev，但我们通过 apt-get 安装了 cups-client，它包含了运行 pycups 所需的共享库

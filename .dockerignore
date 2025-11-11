@@ -1,0 +1,16 @@
+# 忽略 Python 虚拟环境
+venv/
+__pycache__/
+*.pyc
+*.bak
+
+# 忽略临时上传目录和转换目录
+uploads/
+instance/
+
+# 忽略 Git 文件 (如果使用 Git)
+.git
+.gitignore
+
+# 忽略 IDE 和编辑器配置文件
+.vscode/
